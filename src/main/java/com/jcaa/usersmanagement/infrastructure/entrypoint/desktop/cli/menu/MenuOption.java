@@ -14,6 +14,11 @@ public enum MenuOption {
   UPDATE_USER(4, "Update user"),
   DELETE_USER(5, "Delete user"),
   LOGIN(6, "Login"),
+  LIST_RADIOS(7, "List all radios"),
+  FIND_RADIO(8, "Find radio by ID"),
+  CREATE_RADIO(9, "Create radio"),
+  UPDATE_RADIO(10, "Update radio"),
+  DELETE_RADIO(11, "Delete radio"),
   EXIT(0, "Exit");
 
   private final int number;
