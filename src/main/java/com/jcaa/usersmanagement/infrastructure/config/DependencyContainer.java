@@ -1,23 +1,35 @@
 package com.jcaa.usersmanagement.infrastructure.config;
 
+import com.jcaa.usersmanagement.application.port.in.CreateRadioUseCase;
 import com.jcaa.usersmanagement.application.port.in.CreateUserUseCase;
+import com.jcaa.usersmanagement.application.port.in.DeleteRadioUseCase;
 import com.jcaa.usersmanagement.application.port.in.DeleteUserUseCase;
+import com.jcaa.usersmanagement.application.port.in.GetAllRadiosUseCase;
 import com.jcaa.usersmanagement.application.port.in.GetAllUsersUseCase;
+import com.jcaa.usersmanagement.application.port.in.GetRadioByIdUseCase;
 import com.jcaa.usersmanagement.application.port.in.GetUserByIdUseCase;
 import com.jcaa.usersmanagement.application.port.in.LoginUseCase;
+import com.jcaa.usersmanagement.application.port.in.UpdateRadioUseCase;
 import com.jcaa.usersmanagement.application.port.in.UpdateUserUseCase;
+import com.jcaa.usersmanagement.application.service.CreateRadioService;
 import com.jcaa.usersmanagement.application.service.CreateUserService;
+import com.jcaa.usersmanagement.application.service.DeleteRadioService;
 import com.jcaa.usersmanagement.application.service.DeleteUserService;
 import com.jcaa.usersmanagement.application.service.EmailNotificationService;
+import com.jcaa.usersmanagement.application.service.GetAllRadiosService;
 import com.jcaa.usersmanagement.application.service.GetAllUsersService;
+import com.jcaa.usersmanagement.application.service.GetRadioByIdService;
 import com.jcaa.usersmanagement.application.service.GetUserByIdService;
 import com.jcaa.usersmanagement.application.service.LoginService;
+import com.jcaa.usersmanagement.application.service.UpdateRadioService;
 import com.jcaa.usersmanagement.application.service.UpdateUserService;
 import com.jcaa.usersmanagement.infrastructure.adapter.email.JavaMailEmailSenderAdapter;
 import com.jcaa.usersmanagement.infrastructure.adapter.email.SmtpConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConnectionFactory;
+import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.RadioRepositoryInMemory;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.UserRepositoryMySQL;
+import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.RadioController;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.UserController;
 
 import java.sql.Connection;
@@ -39,6 +51,7 @@ public final class DependencyContainer {
   private static final String SMTP_FROM_NAME = "smtp.from.name";
 
   private final UserController userController;
+  private final RadioController radioController;
 
   public DependencyContainer() {
     final AppProperties properties = new AppProperties();
@@ -71,10 +84,35 @@ public final class DependencyContainer {
             getUserByIdUseCase,
             getAllUsersUseCase,
             loginUseCase);
+
+    // Radio: in-memory adapter (a single instance implements all the output ports)
+    final RadioRepositoryInMemory radioRepository = new RadioRepositoryInMemory();
+
+    final CreateRadioUseCase createRadioUseCase =
+        new CreateRadioService(radioRepository, validator);
+    final UpdateRadioUseCase updateRadioUseCase =
+        new UpdateRadioService(radioRepository, radioRepository, validator);
+    final DeleteRadioUseCase deleteRadioUseCase =
+        new DeleteRadioService(radioRepository, radioRepository, validator);
+    final GetRadioByIdUseCase getRadioByIdUseCase =
+        new GetRadioByIdService(radioRepository, validator);
+    final GetAllRadiosUseCase getAllRadiosUseCase = new GetAllRadiosService(radioRepository);
+
+    this.radioController =
+        new RadioController(
+            createRadioUseCase,
+            updateRadioUseCase,
+            deleteRadioUseCase,
+            getRadioByIdUseCase,
+            getAllRadiosUseCase);
   }
 
   public UserController userController() {
     return userController;
+  }
+
+  public RadioController radioController() {
+    return radioController;
   }
 
   private static Connection buildDatabaseConnection(final AppProperties properties) {
