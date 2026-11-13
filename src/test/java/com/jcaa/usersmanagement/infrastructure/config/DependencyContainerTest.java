@@ -104,4 +104,28 @@ class DependencyContainerTest {
           "PersistenceException must propagate without wrapping when DriverManager throws SQLException");
     }
   }
+
+  //  radioController()  radio wiring
+
+  @Test
+  @DisplayName("radioController() returns a non-null RadioController after construction")
+  void shouldExposeNonNullRadioController() {
+    // Arrange
+    try (final MockedStatic<DriverManager> mockedDriverManager = mockStatic(DriverManager.class)) {
+      mockedDriverManager
+          .when(
+              () ->
+                  DriverManager.getConnection(
+                      any(String.class), any(String.class), any(String.class)))
+          .thenReturn(mockConnection);
+
+      // Act
+      final DependencyContainer container = new DependencyContainer();
+
+      // Assert
+      assertNotNull(
+          container.radioController(),
+          "radioController() must return a non-null RadioController after successful construction");
+    }
+  }
 }
