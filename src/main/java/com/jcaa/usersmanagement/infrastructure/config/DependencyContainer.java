@@ -27,7 +27,7 @@ import com.jcaa.usersmanagement.infrastructure.adapter.email.JavaMailEmailSender
 import com.jcaa.usersmanagement.infrastructure.adapter.email.SmtpConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConnectionFactory;
-import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.RadioRepositoryInMemory;
+import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.RadioRepositoryMySQL;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.UserRepositoryMySQL;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.RadioController;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.UserController;
@@ -63,7 +63,6 @@ public final class DependencyContainer {
         new JavaMailEmailSenderAdapter(buildSmtpConfig(properties));
     final EmailNotificationService emailNotification = new EmailNotificationService(emailSender);
 
-    // Construir Validator para las validaciones en la capa de aplicación
     final Validator validator = ValidatorProvider.buildValidator();
 
     final CreateUserUseCase createUserUseCase =
@@ -85,8 +84,7 @@ public final class DependencyContainer {
             getAllUsersUseCase,
             loginUseCase);
 
-    // Radio: in-memory adapter (a single instance implements all the output ports)
-    final RadioRepositoryInMemory radioRepository = new RadioRepositoryInMemory();
+    final RadioRepositoryMySQL radioRepository = new RadioRepositoryMySQL(connection);
 
     final CreateRadioUseCase createRadioUseCase =
         new CreateRadioService(radioRepository, validator);
