@@ -1,8 +1,3 @@
--- =============================================
--- Script de creación de la base de datos
--- Gestión de Usuarios - Arquitectura Hexagonal
--- =============================================
-
 CREATE DATABASE IF NOT EXISTS crud_usuarios
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
@@ -20,7 +15,6 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Emisoras de radio (entidad Radio del CEA)
 CREATE TABLE IF NOT EXISTS radios (
     id                 VARCHAR(36)   NOT NULL PRIMARY KEY,
     name               VARCHAR(100)  NOT NULL,
@@ -31,7 +25,6 @@ CREATE TABLE IF NOT EXISTS radios (
     CONSTRAINT chk_radios_frequency CHECK (frequency > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Usuario administrador inicial (password: Admin1234!)
 INSERT INTO users (id, name, email, password, role, status)
 VALUES (
     '00000000-0000-0000-0000-000000000001',
@@ -41,4 +34,3 @@ VALUES (
     'ADMIN',
     'ACTIVE'
 );
-

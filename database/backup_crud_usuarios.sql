@@ -6,9 +6,6 @@ CREATE DATABASE IF NOT EXISTS crud_usuarios
 
 USE crud_usuarios;
 
--- ------------------------------------------------------------
--- Tabla radios
--- ------------------------------------------------------------
 DROP TABLE IF EXISTS radios;
 
 CREATE TABLE radios (
@@ -28,9 +25,6 @@ INSERT INTO radios (id, name, frequency, transmission_type) VALUES
     ('a93d4e07-2f6b-4c18-b5e9-0d7a1c8e4f03', 'La FM',         94.900, 'FM');
 UNLOCK TABLES;
 
--- ------------------------------------------------------------
--- Tabla users
--- ------------------------------------------------------------
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
@@ -44,7 +38,6 @@ CREATE TABLE users (
     updated_at  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Usuario administrador inicial (el hash es un marcador, no una clave real)
 LOCK TABLES users WRITE;
 INSERT INTO users (id, name, email, password, role, status) VALUES
     ('00000000-0000-0000-0000-000000000001', 'Administrador', 'admin@example.com',
